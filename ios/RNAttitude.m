@@ -96,6 +96,7 @@ RCT_EXPORT_METHOD(startObserving) {
         CMDeviceMotionHandler attitudeHandler = ^(CMDeviceMotion * _Nullable motion, NSError * _Nullable error)
         {
             long long tempMs = (long long)([[NSDate date] timeIntervalSince1970] * 1000.0);
+            long long timeStampUniform = [Utilities sensorTimestampToEpochMilliseconds:motion.timestamp];
             long long timeSinceLastUpdate = (tempMs - self->lastSampleTime);
             if(timeSinceLastUpdate >= self->intervalMillis){
                 // get the current device orientation
@@ -145,7 +146,8 @@ RCT_EXPORT_METHOD(startObserving) {
                      (heading > (self->lastHeading + YAWTRIGGER)) || (heading < (self->lastHeading - YAWTRIGGER))) {
                     [self sendEventWithName:@"attitudeUpdate"
                         body:@{
-                            @"timestamp" : @(tempMs),
+                            //@"timestamp" : @(tempMs),
+                            @"timestamp" : @(timeStampUniform),
                             @"roll" : @(self->roll),
                             @"pitch": @(self->pitch),
                             @"heading": @(heading),
@@ -246,3 +248,11 @@ float normalizeRange(float val, float min, float max) {
 
 @end
 
+// Based on Timestamp to epoch converter in react-native-sensors
+// https://github.com/react-native-sensors/react-native-sensors/blob/master/ios/Utils.m
+@implementation Utilities
+
++ (double)sensorTimestampToEpochMilliseconds:(NSTimeInterval) timestamp {
+    return floor(([[NSDate date] timeIntervalSince1970] + (timestamp - [[NSProcessInfo processInfo] systemUptime])) * 1000);
+}
+@end

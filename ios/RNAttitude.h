@@ -23,4 +23,13 @@
 }
 
 @end
+
+// Based on Timestamp to epoch converter in react-native-sensors
+// https://github.com/react-native-sensors/react-native-sensors/blob/master/ios/Utils.h
+@interface Utilities : NSObject
+
++ (double)sensorTimestampToEpochMilliseconds:(double) timestamp;
+
+@end
+
   

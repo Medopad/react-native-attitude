@@ -74,6 +74,11 @@ public class RNAttitudeModule extends ReactContextBaseJavaModule implements Life
     return NAME;
   }
 
+  private static double sensorTimestampToEpochMilliseconds(long elapsedTime) {
+    // elapsedTime = The time in nanoseconds at which the event happened.
+    return System.currentTimeMillis() + ((elapsedTime-SystemClock.elapsedRealtimeNanos())/1000000L);
+  }
+
   //------------------------------------------------------------------------------------------------
   // React interface
 
@@ -194,7 +199,8 @@ public class RNAttitudeModule extends ReactContextBaseJavaModule implements Life
         (roll > (mLastRoll + ROLLTRIGGER)) || (roll < (mLastRoll - ROLLTRIGGER)) ||
         (yaw > (mLastYaw + YAWTRIGGER)) || (yaw < (mLastYaw - YAWTRIGGER))) {
       WritableMap map = Arguments.createMap();
-      map.putDouble("timestamp", sensorEvent.timestamp * NS2MS);
+      //map.putDouble("timestamp", sensorEvent.timestamp * NS2MS);
+      map.putDouble("timestamp", sensorTimestampToEpochMilliseconds(sensorEvent.timestamp));
       map.putDouble("roll", roll);
       map.putDouble("pitch", pitch);
       map.putDouble("heading", yaw);
