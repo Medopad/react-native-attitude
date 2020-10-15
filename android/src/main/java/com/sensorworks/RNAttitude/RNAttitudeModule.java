@@ -203,6 +203,9 @@ public class RNAttitudeModule extends ReactContextBaseJavaModule implements Life
     // if ((pitch > (mLastPitch + PITCHTRIGGER)) || (pitch < (mLastPitch - PITCHTRIGGER)) ||
     //     (roll > (mLastRoll + ROLLTRIGGER)) || (roll < (mLastRoll - ROLLTRIGGER)) ||
     //     (yaw > (mLastYaw + YAWTRIGGER)) || (yaw < (mLastYaw - YAWTRIGGER))) {
+
+    // Filtering the duplicate values
+    if (pitch != mLastPitch || roll != mLastRoll || yaw != mLastYaw) {
       WritableMap map = Arguments.createMap();
       
       //map.putDouble("timestamp", sensorEvent.timestamp * NS2MS);
@@ -216,7 +219,7 @@ public class RNAttitudeModule extends ReactContextBaseJavaModule implements Life
       mLastPitch = pitch;
       mLastRoll = roll;
       mLastYaw = yaw;
-    //}
+    }
 
     mNextSampleTime = currentTime + mIntervalMillis;
   }
