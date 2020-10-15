@@ -98,7 +98,10 @@ RCT_EXPORT_METHOD(startObserving) {
             long long tempMs = (long long)([[NSDate date] timeIntervalSince1970] * 1000.0);
             long long timeStampUniform = [Utilities sensorTimestampToEpochMilliseconds:motion.timestamp];
             long long timeSinceLastUpdate = (tempMs - self->lastSampleTime);
-            if(timeSinceLastUpdate >= self->intervalMillis){
+            
+            //NOTE: Commenting this out so data can be gathered at 100 hz
+            //if(timeSinceLastUpdate >= self->intervalMillis){
+                
                 // get the current device orientation
                 UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
                 // setup the 'default' heading and roll adjustment for portrait orientation
@@ -141,9 +144,13 @@ RCT_EXPORT_METHOD(startObserving) {
                 }
                 // Send change events to the Javascript side via the React Native bridge
                 // To avoid flooding the bridge, we only send if the values have changed
-                if ((self->pitch > (self->lastPitch + PITCHTRIGGER)) || (self->pitch < (self->lastPitch - PITCHTRIGGER)) ||
-                     (self->roll > (self->lastRoll + ROLLTRIGGER)) || (self->roll < (self->lastRoll - ROLLTRIGGER)) ||
-                     (heading > (self->lastHeading + YAWTRIGGER)) || (heading < (self->lastHeading - YAWTRIGGER))) {
+
+                //NOTE: Commenting this out so data can be gathered at 100 hz
+
+                // if ((self->pitch > (self->lastPitch + PITCHTRIGGER)) || (self->pitch < (self->lastPitch - PITCHTRIGGER)) ||
+                //      (self->roll > (self->lastRoll + ROLLTRIGGER)) || (self->roll < (self->lastRoll - ROLLTRIGGER)) ||
+                //      (heading > (self->lastHeading + YAWTRIGGER)) || (heading < (self->lastHeading - YAWTRIGGER))) {
+                    
                     [self sendEventWithName:@"attitudeUpdate"
                         body:@{
                             //@"timestamp" : @(tempMs),
@@ -156,9 +163,9 @@ RCT_EXPORT_METHOD(startObserving) {
                     self->lastRoll = self->roll;
                     self->lastPitch = self->pitch;
                     self->lastHeading = heading;
-                }
+                //}
                 self->lastSampleTime = tempMs;
-            }
+            //}
         };
         
         [motionManager startDeviceMotionUpdatesUsingReferenceFrame:CMAttitudeReferenceFrameXMagneticNorthZVertical toQueue:attitudeQueue withHandler:attitudeHandler];

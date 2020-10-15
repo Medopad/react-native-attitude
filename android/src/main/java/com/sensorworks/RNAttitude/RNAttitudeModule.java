@@ -137,9 +137,11 @@ public class RNAttitudeModule extends ReactContextBaseJavaModule implements Life
   @Override
   public void onSensorChanged(SensorEvent sensorEvent) {
     long currentTime = SystemClock.elapsedRealtime();
-    if (currentTime < mNextSampleTime) {
-      return;
-    }
+
+    //NOTE: Commenting this out so data can be gathered at 100 hz
+    // if (currentTime < mNextSampleTime) {
+    //   return;
+    // }
 
     SensorManager.getRotationMatrixFromVector(mRotationMatrix, getVectorFromSensorEvent(sensorEvent));
 
@@ -195,12 +197,17 @@ public class RNAttitudeModule extends ReactContextBaseJavaModule implements Life
 
     // Send change events to the Javascript side via the React Native bridge
     // To avoid flooding the bridge, we only send if the values have changed
-    if ((pitch > (mLastPitch + PITCHTRIGGER)) || (pitch < (mLastPitch - PITCHTRIGGER)) ||
-        (roll > (mLastRoll + ROLLTRIGGER)) || (roll < (mLastRoll - ROLLTRIGGER)) ||
-        (yaw > (mLastYaw + YAWTRIGGER)) || (yaw < (mLastYaw - YAWTRIGGER))) {
+
+    //NOTE: Commenting this out so data can be gathered at 100 hz
+
+    // if ((pitch > (mLastPitch + PITCHTRIGGER)) || (pitch < (mLastPitch - PITCHTRIGGER)) ||
+    //     (roll > (mLastRoll + ROLLTRIGGER)) || (roll < (mLastRoll - ROLLTRIGGER)) ||
+    //     (yaw > (mLastYaw + YAWTRIGGER)) || (yaw < (mLastYaw - YAWTRIGGER))) {
       WritableMap map = Arguments.createMap();
+      
       //map.putDouble("timestamp", sensorEvent.timestamp * NS2MS);
       map.putDouble("timestamp", sensorTimestampToEpochMilliseconds(sensorEvent.timestamp));
+      
       map.putDouble("roll", roll);
       map.putDouble("pitch", pitch);
       map.putDouble("heading", yaw);
@@ -209,7 +216,7 @@ public class RNAttitudeModule extends ReactContextBaseJavaModule implements Life
       mLastPitch = pitch;
       mLastRoll = roll;
       mLastYaw = yaw;
-    }
+    //}
 
     mNextSampleTime = currentTime + mIntervalMillis;
   }
