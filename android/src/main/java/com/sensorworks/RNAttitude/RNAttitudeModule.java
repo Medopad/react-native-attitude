@@ -138,10 +138,9 @@ public class RNAttitudeModule extends ReactContextBaseJavaModule implements Life
   public void onSensorChanged(SensorEvent sensorEvent) {
     long currentTime = SystemClock.elapsedRealtime();
 
-    //NOTE: Commenting this out so data can be gathered at 100 hz
-    // if (currentTime < mNextSampleTime) {
-    //   return;
-    // }
+    if (currentTime < mNextSampleTime) {
+      return;
+    }
 
     SensorManager.getRotationMatrixFromVector(mRotationMatrix, getVectorFromSensorEvent(sensorEvent));
 
@@ -204,8 +203,6 @@ public class RNAttitudeModule extends ReactContextBaseJavaModule implements Life
     //     (roll > (mLastRoll + ROLLTRIGGER)) || (roll < (mLastRoll - ROLLTRIGGER)) ||
     //     (yaw > (mLastYaw + YAWTRIGGER)) || (yaw < (mLastYaw - YAWTRIGGER))) {
 
-    // Filtering the duplicate values
-    if (pitch != mLastPitch || roll != mLastRoll || yaw != mLastYaw) {
       WritableMap map = Arguments.createMap();
       
       //map.putDouble("timestamp", sensorEvent.timestamp * NS2MS);
@@ -219,7 +216,7 @@ public class RNAttitudeModule extends ReactContextBaseJavaModule implements Life
       mLastPitch = pitch;
       mLastRoll = roll;
       mLastYaw = yaw;
-    }
+    //}
 
     mNextSampleTime = currentTime + mIntervalMillis;
   }
